@@ -11,10 +11,11 @@ import (
 	"bytes"
 	"compress/gzip"
 	"fmt"
-	"internal/lazyregexp"
 	"io"
 	"strings"
 	"time"
+
+	"github.com/guysv/httpfork/src/internal/lazyregexp"
 )
 
 // Profile is an in-memory representation of profile.proto.

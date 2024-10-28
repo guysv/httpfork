@@ -75,7 +75,6 @@ import (
 	"context"
 	"fmt"
 	"html"
-	"internal/profile"
 	"io"
 	"log"
 	"net/http"
@@ -88,6 +87,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/guysv/httpfork/src/internal/profile"
 )
 
 func init() {

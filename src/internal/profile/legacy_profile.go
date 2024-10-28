@@ -11,11 +11,12 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"internal/lazyregexp"
 	"io"
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/guysv/httpfork/src/internal/lazyregexp"
 )
 
 var (
