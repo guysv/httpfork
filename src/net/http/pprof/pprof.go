@@ -76,8 +76,6 @@ import (
 	"context"
 	"fmt"
 	"html"
-	"internal/godebug"
-	"internal/profile"
 	"io"
 	"log"
 	"net/http"
@@ -90,6 +88,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/guysv/httpfork/src/internal/godebug"
+	"github.com/guysv/httpfork/src/internal/profile"
 )
 
 func init() {

@@ -49,12 +49,13 @@ package godebug
 // meaning it cannot introduce a GODEBUG setting of its own.
 // We keep imports to the absolute bare minimum.
 import (
-	"internal/bisect"
-	"internal/godebugs"
 	"sync"
 	"sync/atomic"
 	"unsafe"
 	_ "unsafe" // go:linkname
+
+	"github.com/guysv/httpfork/src/internal/bisect"
+	"github.com/guysv/httpfork/src/internal/godebugs"
 )
 
 // A Setting is a single setting in the $GODEBUG environment variable.

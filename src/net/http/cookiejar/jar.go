@@ -11,12 +11,13 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"net/http/internal/ascii"
 	"net/url"
 	"slices"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/guysv/httpfork/src/net/http/internal/ascii"
 )
 
 // PublicSuffixList provides the public suffix of a domain. For example:
