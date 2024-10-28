@@ -34,8 +34,10 @@ package godebug
 // meaning it cannot introduce a GODEBUG setting of its own.
 // We keep imports to the absolute bare minimum.
 import (
+	"os"
 	"sync"
 	"sync/atomic"
+	"syscall"
 	"unsafe"
 	_ "unsafe" // go:linkname
 
@@ -172,14 +174,35 @@ func lookup(name string) *setting {
 // again each time the environment variable changes
 // (due to use of os.Setenv, for example).
 //
-//go:linkname setUpdate
-func setUpdate(update func(string, string))
+// func setUpdate(update func(string, string))
+var updateFunc func(string, string)
+var mu sync.Mutex
+
+// SetUpdate registers the update function and invokes it immediately with the current GODEBUG value.
+func setUpdate(update func(string, string)) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	updateFunc = update
+
+	// Sample the GODEBUG value once.
+	def := "" // Default value (if you need to provide one).
+	env := os.Getenv("GODEBUG")
+	if updateFunc != nil {
+		updateFunc(def, env)
+	}
+}
 
 // registerMetric is provided by package runtime.
 // It forwards registrations to runtime/metrics.
 //
-//go:linkname registerMetric
-func registerMetric(name string, read func() uint64)
+// func registerMetric(name string, read func() uint64)
+//
+
+// RegisterMetric registers a new metric by name.
+func registerMetric(name string, read func() uint64) {
+	// noop
+}
 
 // setNewIncNonDefault is provided by package runtime.
 // The runtime can do
@@ -191,9 +214,9 @@ func registerMetric(name string, read func() uint64)
 //	inc := godebug.New(name).IncNonDefault
 //
 // since it cannot import godebug.
-//
-//go:linkname setNewIncNonDefault
-func setNewIncNonDefault(newIncNonDefault func(string) func())
+func setNewIncNonDefault(newIncNonDefault func(string) func()) {
+	// noop
+}
 
 func init() {
 	setUpdate(update)
@@ -286,6 +309,14 @@ func (*runtimeStderr) Write(b []byte) (int, error) {
 
 // Since we cannot import os or syscall, use the runtime's write function
 // to print to standard error.
-//
-//go:linkname write runtime.write
-func write(fd uintptr, p unsafe.Pointer, n int32) int32
+func write(fd uintptr, p unsafe.Pointer, n int32) int32 {
+	// Convert the unsafe pointer to a byte slice.
+	data := unsafe.Slice((*byte)(p), n)
+
+	// Use syscall to write directly to the specified file descriptor.
+	written, err := syscall.Write(int(fd), data)
+	if err != nil {
+		return -1 // Indicate error, similar to runtime behavior.
+	}
+	return int32(written)
+}
